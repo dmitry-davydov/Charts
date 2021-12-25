@@ -12,6 +12,9 @@
 import Foundation
 import CoreGraphics
 
+public protocol AxisLabelFormatterDelegate: AnyObject {
+    func format(for index: Int) -> String
+}
 
 @objc(ChartXAxisRenderer)
 open class XAxisRenderer: NSObject, AxisRenderer
@@ -20,6 +23,8 @@ open class XAxisRenderer: NSObject, AxisRenderer
     public let axis: XAxis
     public let transformer: Transformer?
 
+    public weak var labelFormatterDelegate: AxisLabelFormatterDelegate?
+    
     @objc public init(viewPortHandler: ViewPortHandler, axis: XAxis, transformer: Transformer?)
     {
         self.viewPortHandler = viewPortHandler
@@ -278,7 +283,14 @@ open class XAxisRenderer: NSObject, AxisRenderer
 
             guard viewPortHandler.isInBoundsX(position.x) else { continue }
             
-            let label = axis.valueFormatter?.stringForValue(axis.entries[i], axis: axis) ?? ""
+            let label: String
+            
+            if let labelFormatterDelegate = labelFormatterDelegate {
+                label = labelFormatterDelegate.format(for: i)
+            } else {
+                label = axis.valueFormatter?.stringForValue(axis.entries[i], axis: axis) ?? ""
+            }
+            
             let labelns = label as NSString
             
             if axis.isAvoidFirstLastClippingEnabled
