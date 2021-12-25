@@ -12,6 +12,10 @@
 import Foundation
 import CoreGraphics
 
+protocol AxisLegendLabelFormatterDelegate {
+    func format(for index: Int) -> String
+}
+
 /// Base class for all axes
 @objc(ChartAxisBase)
 open class AxisBase: ComponentBase
@@ -20,6 +24,8 @@ open class AxisBase: ComponentBase
     {
         super.init()
     }
+ 
+    var legendLabelFormatterDelegate: AxisLegendLabelFormatterDelegate?
     
     /// Custom formatter that is used instead of the auto-formatter if set
     private lazy var _axisValueFormatter: AxisValueFormatter = DefaultAxisValueFormatter(decimals: decimals)
@@ -144,8 +150,11 @@ open class AxisBase: ComponentBase
     /// - Returns: The formatted label at the specified index. This will either use the auto-formatter or the custom formatter (if one is set).
     @objc open func getFormattedLabel(_ index: Int) -> String
     {
-        guard entries.indices.contains(index) else { return "" }
+        if let legendLabelFormatterDelegate = legendLabelFormatterDelegate {
+            return legendLabelFormatterDelegate.format(for: index)
+        }
         
+        guard entries.indices.contains(index) else { return "" }
         return valueFormatter?.stringForValue(entries[index], axis: self) ?? ""
     }
     
