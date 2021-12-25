@@ -20,6 +20,8 @@ open class AxisBase: ComponentBase
     {
         super.init()
     }
+ 
+    open weak var labelFormatterDelegate: AxisLabelFormatterDelegate?
     
     /// Custom formatter that is used instead of the auto-formatter if set
     private lazy var _axisValueFormatter: AxisValueFormatter = DefaultAxisValueFormatter(decimals: decimals)
@@ -144,6 +146,10 @@ open class AxisBase: ComponentBase
     /// - Returns: The formatted label at the specified index. This will either use the auto-formatter or the custom formatter (if one is set).
     @objc open func getFormattedLabel(_ index: Int) -> String
     {
+        if let labelFormatterDelegate = labelFormatterDelegate {
+            return labelFormatterDelegate.format(for: index)
+        }
+        
         guard entries.indices.contains(index) else { return "" }
         return valueFormatter?.stringForValue(entries[index], axis: self) ?? ""
     }
