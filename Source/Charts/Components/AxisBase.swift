@@ -12,7 +12,7 @@
 import Foundation
 import CoreGraphics
 
-protocol AxisLegendLabelFormatterDelegate {
+public protocol AxisLegendLabelFormatterDelegate {
     func format(for index: Int) -> String
 }
 
@@ -25,7 +25,7 @@ open class AxisBase: ComponentBase
         super.init()
     }
  
-    var legendLabelFormatterDelegate: AxisLegendLabelFormatterDelegate?
+    open var legendLabelFormatterDelegate: AxisLegendLabelFormatterDelegate?
     
     /// Custom formatter that is used instead of the auto-formatter if set
     private lazy var _axisValueFormatter: AxisValueFormatter = DefaultAxisValueFormatter(decimals: decimals)
