@@ -286,7 +286,7 @@ open class XAxisRenderer: NSObject, AxisRenderer
             let label: String
             
             if let labelFormatterDelegate = labelFormatterDelegate {
-                label = labelFormatterDelegate.format(for: i)
+                label = labelFormatterDelegate.format(for: Int(axis.entries[i].rounded()))
             } else {
                 label = axis.valueFormatter?.stringForValue(axis.entries[i], axis: axis) ?? ""
             }
